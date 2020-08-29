@@ -21,7 +21,8 @@ namespace Server.Controllers
             string client_id, // client id
             string redirect_uri,
             string scope, // what info I want = email, grandma,tel
-            string state) // random string generated to confirm that we are going to back to the same client
+            string state, // random string generated to confirm that we are going to back to the same client
+            string refresh_token)
         {
             // ?a=foo&b=bar
             var query = new QueryBuilder();
@@ -71,7 +72,9 @@ namespace Server.Controllers
                 Constants.Audiance,
                 claims,
                 notBefore: DateTime.Now,
-                expires: DateTime.Now.AddHours(1),
+                expires: grant_type == "refresh_token"
+                    ? DateTime.Now.AddMinutes(5)
+                    : DateTime.Now.AddMilliseconds(1),
                 signingCredentials);
 
             var access_token = new JwtSecurityTokenHandler().WriteToken(token);
@@ -80,7 +83,8 @@ namespace Server.Controllers
             {
                 access_token,
                 token_type = "Bearer",
-                raw_claim = "oauthTutorial"
+                raw_claim = "oauthTutorial",
+                refresh_token = "RefreshTokenSampleValueSomething77"
             };
 
             var responseJson = JsonConvert.SerializeObject(responseObject);
