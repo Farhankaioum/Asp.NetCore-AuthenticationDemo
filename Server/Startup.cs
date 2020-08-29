@@ -46,6 +46,8 @@ namespace Server
                     };
                 });
 
+            
+
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
         }
